@@ -1,7 +1,7 @@
 from collections import defaultdict, deque
 from pprint import pprint
 
-with open("input.txt") as f:
+with open("test.txt") as f:
     content = [x.strip() for x in f.readlines()]
     # content = [int(x) for x in f.readlines()]
 
