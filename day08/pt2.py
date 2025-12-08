@@ -1,12 +1,62 @@
-from collections import defaultdict
+from collections import defaultdict, deque
+from ctypes.wintypes import tagPOINT
 from pprint import pprint
+import math
+
+class UnionFind:
+    def __init__(self):
+        self.parent = {}
+
+    def make_set(self, elements):
+        for element in elements:
+            self.parent[element] = element
+
+    def find(self, element):
+        if self.parent[element] != element:
+            self.parent[element] = self.find(self.parent[element])
+        return self.parent[element]
+
+    def union(self, element1, element2):
+        root1 = self.find(element1)
+        root2 = self.find(element2)
+        if root1 != root2:
+            self.parent[root1] = root2
+
+
 
 with open("input.txt") as f:
-    content = f.readlines()
-    #content = [int(x) for x in f.readlines()]
+    content = [x.strip() for x in f.readlines()]
+    # content = [int(x) for x in f.readlines()]
+
+def distance (a, b):
+    ax,ay,az = a
+    bx,by,bz = b
+    dx = ax - bx
+    dy = ay - by
+    dz = az - bz
+    return math.sqrt(dx**2 + dy**2 + dz**2)
 
 
-for v1 in content:
-    for v2 in content:
-        if int(v1) + int(v2) == 2020:
-            print(v1, v2, (int(v1)*int(v2)))
+boxes = []
+for line in content:
+    x,y,z = [int(x) for x in line.split(',')]
+    boxes.append((x,y,z))
+
+distances = {}
+for b in boxes:
+    for b1 in boxes:
+        if b == b1:
+            continue
+        distances[distance(b, b1)] = (b, b1)
+
+
+uf = UnionFind()
+uf.make_set(boxes)
+
+for d in sorted(distances):
+    a,b = distances[d]
+    uf.union(a,b)
+    if all(uf.find(box) == uf.find(boxes[0]) for box in boxes):
+        print(a, b)
+        print(a[0] * b[0])
+        break
