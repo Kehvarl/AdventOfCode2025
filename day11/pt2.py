@@ -2,11 +2,12 @@ from collections import defaultdict, deque
 from functools import cache
 from pprint import pprint
 
+
 with open("input.txt") as f:
     content = [x.strip() for x in f.readlines()]
     # content = [int(x) for x in f.readlines()]
 
-devices = {}
+devices = defaultdict(list)
 for line in content:
     tag, contents = line.split(": ")
     contents = contents.split()
@@ -14,15 +15,21 @@ for line in content:
 
 #pprint(devices)
 @cache
-def dfs(start, paths):
-    if start == 'out':
-        if paths == ('dac', 'fft'): return 1
-        return 0
+def dfs(start, seen):
     if start in ('dac', 'fft'):
-        paths = set(paths)
-        paths.add(start)
-        paths = tuple(sorted(paths))
-    return sum(dfs(n, paths) for n in devices[start])
+        seen = set(seen)
+        seen.add(start)
+        seen = tuple(sorted(seen))
 
+    if start == 'out':
+        if seen == ('dac', 'fft'):
+            return 1
+        return 0
 
-print(dfs('svr', tuple()))
+    out = 0
+    for n in devices[start]:
+        out += dfs(n, seen)
+
+    return out
+
+print(dfs('svr', ()))
