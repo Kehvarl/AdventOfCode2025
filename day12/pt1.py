@@ -69,12 +69,13 @@ for r in regions:
     rx, ry, r_shapes = r
     ra = rx * ry
 
-    required_area = sum(
-        count * presents[idx] for idx, count in enumerate(r_shapes)
-    )
-    print(rx, ry, ra, r_shapes, required_area)
+    space_needed = 0
+    for i,s in enumerate(r_shapes):
+        space_needed += s * presents[i]
 
-    if ra >= required_area:
+    print(rx, ry, ra, r_shapes, space_needed)
+
+    if ra >= space_needed:
         valid += 1
 
 print(valid)
