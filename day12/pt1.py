@@ -1,10 +1,81 @@
 from collections import defaultdict, deque
 from pprint import pprint
+from functools import cache
 
 with open("input.txt") as f:
-    content = [x.strip() for x in f.readlines()]
+    content = f.read()
     # content = [int(x) for x in f.readlines()]
 
-for y, v1 in enumerate(content):
-    for x, v2 in enumerate(v1):
-        pass
+def rotate(present):
+    newshape = []
+    for y in range(len(present)):
+        newline = ""
+        for x in range(len(present[0])):
+            newline += present[2-x][y]
+        newshape.append(newline)
+    return newshape
+
+def flip(present):
+    new_shape = []
+    for line in range(len(present)):
+        new_shape.append(present[2-line])
+    return new_shape
+
+def rotate_and_flip(shape):
+    variants = set()
+    for turn in range(4):
+        shape = rotate(shape)
+        variants.add(tuple(shape))
+        variants.add(tuple(flip(shape)))
+    return [list(s) for s in variants]
+
+def draw(present):
+    for y,line in enumerate(present):
+        newline = ""
+        for x,c in enumerate(line):
+            newline += c
+        print(newline)
+    print()
+
+
+blob = content.split("\n\n")
+blob2 = blob[-1]
+presents = {}
+for p in blob[:-1]:
+    id, p = p.split(":")
+    shape = p.strip().split("\n")
+    simple = ""
+    squares = 0
+    for y, line in enumerate(shape):
+        for x, c in enumerate(line):
+            if c == "#":
+                simple += "1"
+                squares += 1
+            else:
+                simple += "0"
+
+    presents[int(id)] = squares
+
+regions = []
+for r in blob2.strip().split("\n"):
+    size, shapes = r.split(":")
+    sx,sy = size.split("x")
+    shapes = tuple([int(s) for s in shapes.strip().split()])
+    regions.append((int(sx), int(sy), shapes))
+
+
+valid = 0
+for r in regions:
+    rx, ry, r_shapes = r
+    ra = rx * ry
+
+    space_needed = 0
+    for i,s in enumerate(r_shapes):
+        space_needed += s * presents[i]
+
+    print(rx, ry, ra, r_shapes, space_needed)
+
+    if ra >= space_needed:
+        valid += 1
+
+print(valid)
