@@ -54,7 +54,7 @@ for p in blob[:-1]:
             else:
                 simple += "0"
 
-    presents[int(id)] = (int(simple), squares)
+    presents[int(id)] = squares
 
 regions = []
 for r in blob2.strip().split("\n"):
@@ -70,7 +70,7 @@ for r in regions:
     ra = rx * ry
 
     required_area = sum(
-        count * presents[idx][1] for idx, count in enumerate(r_shapes)
+        count * presents[idx] for idx, count in enumerate(r_shapes)
     )
     print(rx, ry, ra, r_shapes, required_area)
 
